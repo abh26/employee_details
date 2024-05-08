@@ -1,0 +1,112 @@
+syntax = "proto3";
+option go_package="./pb";
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+    info: {
+      title: "dev-vin2-apigateway"
+      version: "1.0"
+    }
+};
+message EmployeeRecordsRequest{
+    int32 page = 1;
+    int32 limit=2;
+}
+message EmployeeRecordsResponse{
+    string status=1;
+    string statuscode=2;
+    string message =3;
+    repeated record data=4;
+    page pagination=5;
+}
+message record{
+    int32 Id=1;
+    string Name=2;
+    string Position=3;
+    float Salary=4;
+}
+
+message page{
+    int32 current_page=1;
+    int32 start=2;
+    int32 last_page=3;
+    int32 per_page=4;
+    int32 end=5;
+    int32 total=6;
+}
+
+
+service ListEmployeeRecordService{
+rpc ListEmployeeRecords (EmployeeRecordsRequest) returns (EmployeeRecordsResponse){
+    option (google.api.http) = {
+        post: "/api/rs/v1/list/employeerecords"
+        body: "*"
+        
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+        extensions: {
+            key: "x-amazon-apigateway-integration"
+            value {
+                struct_value {
+                fields {
+                    key: "connectionId"
+                    value {
+                    string_value: "${stageVariables.vpcLinkId}"
+                    }
+                }
+                fields {
+                    key: "httpMethod"
+                    value {
+                    string_value: "POST"
+                    }
+                }
+                fields {
+                    key: "uri"
+                    value {
+                        string_value: "https://${stageVariables.baseEndpointUri}/api/rs/v1/list/employeerecords"
+                    }
+                }
+                fields {
+                    key: "responses"
+                    value {
+                        struct_value {
+                            fields {
+                                key: "default"
+                                value {
+                                struct_value {
+                                    fields {
+                                        key: "statusCode"
+                                        value {
+                                        string_value: "200"
+                                        }
+                                    }
+                                }
+                                }
+                            }
+                        }
+                    }
+                }
+                fields {
+                    key: "passthroughBehavior"
+                    value {
+                        string_value: "when_no_match"
+                    }
+                }
+                fields {
+                    key: "connectionType"
+                    value {
+                        string_value: "VPC_LINK"
+                    }
+                }
+                fields {
+                    key: "type"
+                    value {
+                        string_value: "http_proxy"
+                    }
+                }
+                }
+            }
+        }
+    };
+}
+}

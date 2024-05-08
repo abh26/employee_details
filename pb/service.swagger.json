@@ -1,0 +1,178 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "dev-vin2-apigateway",
+    "version": "1.0"
+  },
+  "tags": [
+    {
+      "name": "ListEmployeeRecordService"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/rs/v1/list/employeerecords": {
+      "post": {
+        "operationId": "ListEmployeeRecordService_ListEmployeeRecords",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/EmployeeRecordsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/EmployeeRecordsRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ListEmployeeRecordService"
+        ],
+        "x-amazon-apigateway-integration": {
+          "connectionId": "${stageVariables.vpcLinkId}",
+          "connectionType": "VPC_LINK",
+          "httpMethod": "POST",
+          "passthroughBehavior": "when_no_match",
+          "responses": {
+            "default": {
+              "statusCode": "200"
+            }
+          },
+          "type": "http_proxy",
+          "uri": "https://${stageVariables.baseEndpointUri}/api/rs/v1/list/employeerecords"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "EmployeeRecordsRequest": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "EmployeeRecordsResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "statuscode": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/record"
+          }
+        },
+        "pagination": {
+          "$ref": "#/definitions/page"
+        }
+      }
+    },
+    "page": {
+      "type": "object",
+      "properties": {
+        "currentPage": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "start": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "lastPage": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "perPage": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "end": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "total": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "record": {
+      "type": "object",
+      "properties": {
+        "Id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "Position": {
+          "type": "string"
+        },
+        "Salary": {
+          "type": "number",
+          "format": "float"
+        }
+      }
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  }
+}
